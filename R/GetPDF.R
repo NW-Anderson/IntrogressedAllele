@@ -42,11 +42,22 @@ varPhi_N<-function(s, n, par){
 }
 
 psi_M<-function(s, n, par){###par[7] = d_M, par[8] = phi_B, par[9] = theta_B
-  if(n==0){
-    return((par[8] + (1-par[8])*exp(par[9]*(s-1)))*(par[8] + (1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1))))
-  }else{
-    return(())
+  return((par[8] + (1-par[8])*exp(par[9]*(s-1)))*(par[8] + (1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod(s, n, par))
+}
+
+dpsi_M<-function(s, n, par){
+  return((par[8]+(1-par[8])*exp(par[9]*(s-1))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)*psi_sum(s, n, par)))))
+}
+
+psi_sum <- function(s, n, par){
+  i = 1
+  sum = 0
+  while(i<=(n-2)){
+    i = i+1
+    sum = sum + ((1-par[8])*par[9]*(1-par[7])*dvarPhi_N(s, i, par)*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s, i, par)-1)))*psi_prod_helper(s, n, par)
+    sum = sum - ((1-par[8])*par[9]*(1-par[7])*dvarPhi_N(s, i, par)*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s, i, par)-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s,i,par)-1)))
   }
+  return(sum)
 }
 
 psi_prod<-function(s, n, par){
@@ -56,5 +67,17 @@ psi_prod<-function(s, n, par){
     return(par[8]+(1-par[8])*exp(par[9]*(s-1)))
   }else if(n==2){
     return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1))))
+  }else{
+    return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod_helper(s,n,par))
   }
+}
+
+psi_prod_helper<-function(s, n, par){
+  i = 1
+  prod = 1
+  while(i<=(n-2)){
+    i=i+1
+    prod = prod*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s,i,par)-1)))
+  }
+  return(prod)
 }
