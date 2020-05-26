@@ -1,5 +1,5 @@
 GetExp<-function(n, par, pop, tol, num){
-  coeff<- 1/(1-GetPGF(0,n,0,par))
+  coeff<- 1/(1-GetPGF(0,n,pop,par))
   APP = 0
   i = 1
   a = c()

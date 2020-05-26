@@ -5,48 +5,46 @@ GetPGF <- function(s, n, pop, par){#n = generation number
   return(term1 + term2 + term3)
 } 
 
-dvarPhi_I<-function(s, n, par){##par[1] = d_I, par[2] = phi_I, par[3] = theta_I 
+dvarPhi_I<-function(s, n, par){##par[1] = phi_A, par[2] = phi_I, par[3] = theta_I, par[4] = theta_A
   if(n==1){
-    return((1-par[1])*(par[2]+(par[3]+1)*(1-par[2])*exp(par[3]*(s-1))))
+    return(par[3]*par[4]*(1-par[1])*(1-par[2])*exp(par[4]*(par[2]+(1-par[2])*exp(par[3]*(s-1))-1)+par[3]*(s-1)))
   }else{
-    return((1-par[1])*dvarPhi_I(s,n-1, par)*(par[2]+par[3]*varPhi_I(s, n-1, par)+1)*(1-par[2])*exp(par[3]*varPhi_I(s, n-1, par)-1))
+    return(par[3]*par[4]*(1-par[1])*(1-par[2])*dvarPhi_I(s,n-1, par)*exp(par[4]*(par[2]+(1-par[2])*exp(par[3]*(varPhi_I(s, n-1, par)-1))-1)+par[3]*(varPhi_I(s, n-1, par)-1)))
   }
 }
   
 varPhi_I<- function(s, n, par){
   if(n==1){
-    return(par[1] + (1-par[1])*(par[2]+(1-par[2]*exp(par[3]*(s-1))))) 
+    return(par[1] + (1-par[1])*exp(par[4]*(par[2] + (1-par[2])*exp(par[3]*(s-1))-1))) 
   }else{
-    return(par[1] + (1-par[1])*(varPhi_I(s, n-1, par))*(par[2] + (1-par[2])*exp(par[3]*(varPhi_I(s, n-1, par)-1))))
+    return(par[1] + (1-par[1])*exp(par[4]*(par[2] + (1-par[2])*exp(par[3]*(varPhi_I(s, n-1, par)-1))-1)))
   }
 }
 
-dvarPhi_N<-function(s, n, par){##par[4] = d_N, par[5] = phi_N, par[6] = theta_N, par[10] = h
+dvarPhi_N<-function(s, n, par){##par[4] = theta_A, par[5] = phi_N, par[6] = theta_N, par[10] = h
   if(n==1){
-    return((1-par[4])*((par[5]+(1-par[5])*exp(-par[6])*(1+(exp(par[6]*par[10]*s)-1)*(exp(par[6]*(1-par[10])*s)-1)))+
-                         s*((1-par[5])*exp(-par[6])*(par[6]*par[10]*exp(par[6]*par[10]*s)*(exp(par[6]*(1-par[10])*s)-1)
-                                             +(exp(par[6]*par[10]*s)-1)*par[6]*(1-par[10])*exp(par[6]*(1-par[10])*s)))))
+    return((1-par[1])*par[4]*((1-par[5])*par[6]*exp(par[6]*(s-1)))*exp(par[4]*(par[5]+(1-par[5])*exp(par[6]*(s-1))-1)))
   }else{
-    return((1-par[4])*dvarPhi_N(s, n-1, par)*(par[5]+(1-par[5])*exp(-par[6])*(1+(exp(par[6]*par[10]*varPhi_I(s, n-1, par))-1)*(exp(par[6]*(1-par[10])*varPhi_N(s, n-1, par)-1)))+
-                         varPhi_N(s, n-1, par)*((1-par[5])*exp(-par[6])*(par[6]*par[10]*dvarPhi_I(s, n-1, par)*exp(par[6]*par[10]*varPhi_N(s, n-1, par))*(exp(par[6]*(1-par[10])*varPhi_N(s, n-1,par))-1))
-                                             +(exp(par[6]*par[10]*varPhi_N(s, n-1,par))-1)*par[6]*(1-par[10])*dvarPhi_N(s, n-1,par)*exp(par[6]*(1-par[10])*varPhi_N(s, n-1,par)))))
+    return((1-par[1])*par[4]*(par[10]*(1-par[5])*par[6]*dvarPhi_I(s, n-1, par)*exp(par[6]*(varPhi_I(s, n-1, par)-1))+(1-par[10])*(1-par[5])*par[6]*dvarPhi_N(s, n-1, par)*exp(par[6]*(varPhi_N(s, n-1, par)-1)))
+                         *exp(par[4]*(par[10]*(par[5]+(1-par[5])*exp(par[6]*(varPhi_I(s,n-1,par)-1)))+(1-par[10])*(par[5]+(1-par[5])*exp(par[6]*(varPhi_N(s, n-1, par)-1)))-1)))
   }
 }
 
 varPhi_N<-function(s, n, par){
   if(n==1){
-    return(par[4] +((1-par[4])*s*(par[5]+(1-par[5])*exp(-par[6])*(1+(exp(par[6]*par[10]*s)-1)*(exp(par[6]*(1-par[10])*s)-1)))))
-  }else{
-    return(par[4] +((1-par[4])*varPhi_N(s, n-1, par)*(par[5]+(1-par[5])*exp(-par[6])*(1+(exp(par[6]*par[10]*varPhi_I(s, n-1, par))-1)*(exp(par[6]*(1-par[10])*varPhi_N(s, n-1, par))-1)))))
+    return(par[1]+(1-par[1])*exp(par[4]*(par[5]+(1-par[5])*exp(par[6]*(s-1))-1)))
+    }else{
+    return(par[1] + (1-par[1])*exp(par[4]*(par[10]*(par[5]+(1-par[5])*exp(par[6]*(varPhi_I(s, n-1, par)-1)))
+                                           +(1-par[10])*(par[5]+(1-par[5])*exp(par[6]*(varPhi_N(s, n-1, par)-1)))-1)))
   }
 }
 
 psi_M<-function(s, n, par){###par[7] = d_M, par[8] = phi_B, par[9] = theta_B
-  return((par[8] + (1-par[8])*exp(par[9]*(s-1)))*(par[8] + (1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod(s, n, par))
+  return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod_helper(s, n, par))
 }
 
 dpsi_M<-function(s, n, par){
-  return((par[8]+(1-par[8])*exp(par[9]*(s-1))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)*psi_sum(s, n, par)))))
+  return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_sum(s, n, par))
 }
 
 psi_sum <- function(s, n, par){
