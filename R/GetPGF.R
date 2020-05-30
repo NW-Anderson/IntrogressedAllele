@@ -1,3 +1,4 @@
+# par <- c(phi_A, phi_I, theta_I, theta_A,
 GetPGF <- function(s, n, pop, par){#n = generation number
   term1 <- dvarPhi_I(s, n, par)*(varPhi_N(s, n, par)^pop) * psi_M(s, n, par)
   term2 <- varPhi_I(s, n, par)* pop*(varPhi_N(s, n, par)^(pop-1))* dvarPhi_N(s, n, par)*psi_M(s, n, par)
@@ -53,11 +54,13 @@ psi_sum <- function(s, n, par){
   while(i<=(n-2)){
     i = i+1
     sum = sum + ((1-par[8])*par[9]*(1-par[7])*dvarPhi_N(s, i, par)*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s, i, par)-1)))*psi_prod_helper(s, n, par)
+    # i think this line is set up wrong. the t!=r applies to the product not the sum. If we want to take it away later 
+    #  like this we will need to divide to undo the unwanted product, not subtract
     sum = sum - ((1-par[8])*par[9]*(1-par[7])*dvarPhi_N(s, i, par)*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s, i, par)-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s,i,par)-1)))
   }
   return(sum)
 }
-
+# this function is not called anywhere else is it?
 psi_prod<-function(s, n, par){
   if(n == 0){
     return(s)
@@ -69,7 +72,9 @@ psi_prod<-function(s, n, par){
     return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod_helper(s,n,par))
   }
 }
-
+# I believe the way this is written the first iteration of the while loop is i = 2. 
+#  moving the i + 1 to after the prod line or initializing with i = 0 could 
+#  fix the issue
 psi_prod_helper<-function(s, n, par){
   i = 1
   prod = 1

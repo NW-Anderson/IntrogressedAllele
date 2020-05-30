@@ -1,10 +1,11 @@
+# par <- c(d_I, phi_I, theta_I, d_N, phi_N, theta_N, h, d_M, phi_B, theta_B)
 GetPDF <- function(s, n, pop, par){#n = generation number
   term1 <- dvarPhi_I(s, n, par)*(varPhi_N(s, n, par)^pop) * psi_M(s, n, par)
   term2 <- varPhi_I(s, n, par)* pop*(varPhi_N(s, n, par)^(pop-1))* dvarPhi_N(s, n, par)*psi_M(s, n, par)
   term3 <- varPhi_I(s, n, par)*(varPhi_N(s, n, par)^pop)*dpsi_M(s, n, par)
   return(term1 + term2 + term3)
 } 
-
+##### TODO these functions are antiquated
 dvarPhi_I<-function(s, n, par){##par[1] = d_I, par[2] = phi_I, par[3] = theta_I 
   if(n==0){
     return((1-par[1])*(par[2]+(par[3]+1)*(1-par[2])*exp(par[3]*(s-1))))
@@ -40,12 +41,16 @@ varPhi_N<-function(s, n, par){
     return(par[4] +((1-par[4])*varPhi_N(s, n-1, par)*(par[5]+(1-par[5])*exp(-par[6])*(1+(exp(par[6]*par[10]*varPhi_I(s, n-1, par))-1)*(exp(par[6]*(1-par[10])*varPhi_N(s, n-1, par))-1)))))
   }
 }
-
+##### END antiquated
+# I think this function is set up wrong. The way it is written now (par[8] + (1-par[8])*exp(par[9]*(s-1)))
+#  appears in both the return line and within psi_prod
+#  I believe we could get away with just returning psi_prod the way it is writen
 psi_M<-function(s, n, par){###par[7] = d_M, par[8] = phi_B, par[9] = theta_B
   return((par[8] + (1-par[8])*exp(par[9]*(s-1)))*(par[8] + (1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod(s, n, par))
 }
 
 dpsi_M<-function(s, n, par){
+  # I believe this function needs another parenthesis before psi_sum ))*psi_sum(s, n, par))))
   return((par[8]+(1-par[8])*exp(par[9]*(s-1))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)*psi_sum(s, n, par)))))
 }
 
@@ -55,12 +60,15 @@ psi_sum <- function(s, n, par){
   while(i<=(n-2)){
     i = i+1
     sum = sum + ((1-par[8])*par[9]*(1-par[7])*dvarPhi_N(s, i, par)*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s, i, par)-1)))*psi_prod_helper(s, n, par)
+    # i think this line is set up wrong. the t!=r applies to the product not the sum. If we want to take it away later 
+    #  like this we will need to divide to undo the unwanted product, not subtract
     sum = sum - ((1-par[8])*par[9]*(1-par[7])*dvarPhi_N(s, i, par)*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s, i, par)-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*varPhi_N(s,i,par)-1)))
   }
   return(sum)
 }
 
 psi_prod<-function(s, n, par){
+  # why do we need a n = 0 case?
   if(n == 0){
     return(1)
   }else if(n==1){
