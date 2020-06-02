@@ -47,7 +47,7 @@ psi_M<-function(s, n, par){###par[7] = d_M, par[8] = phi_B, par[9] = theta_B
 dpsi_M<-function(s, n, par){
   return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_sum(s, n, par))
 }
-
+# this one starts at i = 2 as weell
 psi_sum <- function(s, n, par){
   i = 1
   sum = 0
