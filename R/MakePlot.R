@@ -1,9 +1,8 @@
 library(profvis)
 source('DoMatrix.R')
-source('GetPGF.R')
-source('GetExp.R')
+source('DoExact.R')
 
-ngen <- 5
+ngen <- 50
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
 par <-        c(1000,20,      .95,    1,      .1,     1,      .1,     12,      .5,    .05,.5)
 aprx <- vector(length = ngen)
@@ -33,7 +32,7 @@ num = 100
 exact <- vector(length = ngen)
 for(n in 1:ngen){
   cat(n,'\n')
-  exact[n] <- GetExp(n = n, 
+  exact[n] <- DoExact(n = n, 
                   par = par,
                   pop = pop, 
                   tol = tol, 
