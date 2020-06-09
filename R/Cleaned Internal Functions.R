@@ -87,7 +87,7 @@ dvarPhi_N<-function(s, n, par){
   theta_B <- par[9]
   h <- par[10]
   if(n==1){
-    return((1-phi_A)*theta_A*((1-phi_N)*theta_N*exp(theta_N*(s-1)))*exp(theta_A*(phi_N+(1-phi_N)*exp(theta_N*(s-1))-1)))
+    return((1-phi_A)*theta_A*((1-phi_N)*theta_N*h*exp(theta_N*(s-1)))*exp(theta_A*(phi_N+(1-phi_N)*exp(theta_N*(s-1))-1)))
   }else{
     return((1-phi_A)*theta_A*(h*(1-phi_N)*theta_N*dvarPhi_I(s, n-1, par)*exp(theta_N*(varPhi_I(s, n-1, par)-1))+
                                 (1-h)*(1-phi_N)*theta_N*dvarPhi_N(s, n-1, par)*exp(theta_N*(varPhi_N(s, n-1, par)-1)))
