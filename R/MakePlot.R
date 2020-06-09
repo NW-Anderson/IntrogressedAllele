@@ -2,7 +2,8 @@ library(profvis)
 source('DoMatrix.R')
 source('DoExact.R')
 
-ngen <- 50
+ngen <- 20
+
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
 par <-        c(1000,20,      .95,    1,      .1,     1,      .1,     12,      .5,    .05,.5)
 aprx <- vector(length = ngen)
@@ -21,14 +22,6 @@ pop = 1000
 tol = 10^-3 
 num = 100
 
-# profvis({
-#   GetExp(n = 20, 
-#          par = par,
-#          pop = pop, 
-#          tol = tol, 
-#          num = num)
-# })
-
 exact <- vector(length = ngen)
 for(n in 1:ngen){
   cat(n,'\n')
@@ -40,5 +33,5 @@ for(n in 1:ngen){
   
 }
 
-plot(aprx, type = 'l')
+plot(aprx, type = 'l',ylim = c(0,1))
 lines(exact, col = 'red')

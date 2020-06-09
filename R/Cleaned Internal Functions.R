@@ -4,7 +4,7 @@ par <-   c(.95,   .1,    1,       20,      .1,    1,       .5,  .5,    12,      
 pop = 1000 
 tol = 10^-3 
 num = 100
-n <- 50
+n <- 1
 
 Psi <- function(s, n, pop, par){
   return(varPhi_I(s, n, par) * varPhi_N(s,n,par)^pop * psi_M(s, n, par))
