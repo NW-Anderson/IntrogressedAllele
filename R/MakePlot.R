@@ -35,5 +35,16 @@ for(n in 1:ngen){
   times[n] <- start - Sys.time()
 }
 
-plot(aprx, type = 'l',ylim = c(0,1))
-lines(exact, col = 'red')
+plot(aprx, type = 'l',ylim = c(0,1), xlab = 'Generation', ylab = 'frequency', lwd = 2,
+     main = 'Frequency Over Time')
+legend(x = 'topleft', lwd = 2, legend = c('Approx','Exact'), col = c('black','red'),
+       bty = 'n')
+lines(exact, col = 'red', lwd = 2)
+
+
+plot(pp, type = 'l', xlab = 'Generation', ylab = 'Population Size', lwd = 2,
+     main = 'Population Size Over Time')
+
+
+plot(times, type = 'l', xlab = 'Generation', ylab = 'Runtime', lwd = 2,
+     main = 'Runtime Over Time')
