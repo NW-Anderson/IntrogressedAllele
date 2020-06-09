@@ -1,5 +1,9 @@
 #          1      2      3        4        5      6        7    8      9        10
 # par <- c(phi_A, phi_I, theta_I, theta_A, phi_N, theta_N, d_M, phi_B, theta_B, h)
+
+Psi <- function(s, n, pop, par){
+  return(varPhi_I(s, n, par) * varPhi_N(s,n,par)^pop * psi_M(s, n, par))
+}
 GetPGF <- function(s, n, pop, par){#n = generation number
   term1 <- dvarPhi_I(s, n, par)*(varPhi_N(s, n, par)^pop) * psi_M(s, n, par)
   term2 <- varPhi_I(s, n, par)* pop*(varPhi_N(s, n, par)^(pop-1))* dvarPhi_N(s, n, par)*psi_M(s, n, par)
@@ -41,6 +45,7 @@ varPhi_N<-function(s, n, par){
   }
 }
 
+# need to add n = 1 and n = 2 cases
 psi_M<-function(s, n, par){###par[7] = d_M, par[8] = phi_B, par[9] = theta_B
   return((par[8]+(1-par[8])*exp(par[9]*(s-1)))*(par[8]+(1-par[8])*exp(par[9]*(par[7]+(1-par[7])*s-1)))*psi_prod_helper(s, n, par))
 }

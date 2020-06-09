@@ -1,6 +1,7 @@
 GetExp<-function(n, par, pop, tol, num){
   # i think we will need to add a special case for 0, not just enter 0 for n
-  coeff<- 1/(1-GetPGF(0,n,pop,par))
+  # coeff<- 1/(1-GetPGF(0,n,pop,par))
+  coeff <- 1/(1-Psi(0,n,pop,par))
   APP = 0
   i = 1
   a = c()

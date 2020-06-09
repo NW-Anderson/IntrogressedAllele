@@ -3,7 +3,7 @@ source('DoMatrix.R')
 source('GetPGF.R')
 source('GetExp.R')
 
-ngen <- 30
+ngen <- 5
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
 par <-        c(1000,20,      .95,    1,      .1,     1,      .1,     12,      .5,    .05,.5)
 aprx <- vector(length = ngen)
