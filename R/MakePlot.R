@@ -2,10 +2,10 @@ library(profvis)
 source('DoMatrix.R')
 source('DoExact.R')
 
-ngen <- 50
+ngen <- 100
 
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
-par <-        c(1000,20,      .95,    1,      .1,     1,      .1,     12,      .5,    .05,.5)
+par <-        c(1000,24,      .95,    1,      .1,     1,      .1,     24,     .5,    .05,.5)
 aprx <- vector(length = ngen)
 pop <- vector(length = ngen)
 for(n in 1:ngen){
@@ -32,7 +32,8 @@ for(n in 1:ngen){
                   pop = pop, 
                   tol = tol, 
                   num = num)
-  times[n] <- start - Sys.time()
+  end <- Sys.time()
+  times[n] <- end - start
 }
 
 plot(aprx, type = 'l',ylim = c(0,1), xlab = 'Generation', ylab = 'frequency', lwd = 2,
@@ -48,3 +49,4 @@ plot(pp, type = 'l', xlab = 'Generation', ylab = 'Population Size', lwd = 2,
 
 plot(times, type = 'l', xlab = 'Generation', ylab = 'Runtime', lwd = 2,
      main = 'Runtime Over Time')
+
