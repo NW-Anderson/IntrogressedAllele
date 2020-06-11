@@ -1,11 +1,16 @@
-library(profvis)
+library(doSNOW)
+library(foreach)
 source('DoMatrix.R')
 source('DoExact.R')
+cl<-makeCluster(7, type="SOCK")
+on.exit(stopCluster(cl))
+opts <- list(preschedule = FALSE)
+registerDoSNOW(cl)
 
-ngen <- 100
+ngen <- 50
 
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
-par <-        c(1000,24,      .95,    1,      .1,     1,      .1,     24,     .5,    .05,.5)
+par <-        c(1000,22.155,      .95,    1,      .1,     1,      .1,     12,     .5,    .05,.5)
 aprx <- vector(length = ngen)
 pop <- vector(length = ngen)
 for(n in 1:ngen){
@@ -16,25 +21,30 @@ for(n in 1:ngen){
 }
 pp <- pop
 
+
 # par <- c(phi_A, phi_I, theta_I, theta_A, phi_N, theta_N, d_M, phi_B, theta_B, h)
-par <-   c(.95,   .1,    1,       20,      .1,    1,       .5,  .5,    12,      .05)
+par <-   c(.95,   .1,    1,       22.155,      .1,    1,       .5,  .5,    12,      .05)
 pop = 1000 
 tol = 10^-3 
 num = 100
 
-exact <- vector(length = ngen)
-times <- vector(length = ngen)
-for(n in 1:ngen){
+results <- array(dim = c(ngen, 2))
+colnames(results) <- c('freq', 'time')
+results <- foreach(n = 1:ngen, .options.multicore=opts, .combine = 'rbind') %dopar% {
   start <- Sys.time()
   cat(n,'\n')
-  exact[n] <- DoExact(n = n, 
+  exact <- DoExact(n = n, 
                   par = par,
                   pop = pop, 
                   tol = tol, 
                   num = num)
   end <- Sys.time()
-  times[n] <- end - start
+  times <- end - start
+  res <- c(exact, times)
 }
+
+exact <- results[,1]
+times <- results[,2]
 
 plot(aprx, type = 'l',ylim = c(0,1), xlab = 'Generation', ylab = 'frequency', lwd = 2,
      main = 'Frequency Over Time')
