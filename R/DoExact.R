@@ -64,5 +64,5 @@ DoExact<-function(n, par, pop, tol, num){
       }
     }
   }
-  return(coeff*APP)
+  return(c(v[8],coeff*APP))
 }
