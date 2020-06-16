@@ -63,9 +63,9 @@ plot(pp, type = 'l', xlab = 'Generation', ylab = 'Population Size', lwd = 2,
 
 plot(times, type = 'l', xlab = 'Generation', ylab = 'Runtime', lwd = 2,
      main = 'Runtime Over Time')
-lines(bins, col = 'red', lwd = 2)
+#lines(bins, col = 'red', lwd = 2)
 
 plot(times~exact, type = 'l', lwd = 2, main = 'Frequency vs Runtime')
-lines(bins~exact, col = 'red', lwd = 2)
+#lines(bins~exact, col = 'red', lwd = 2)
 
-plot(times~bins, main = 'Bins vs Runtime')
+#plot(times~bins, main = 'Bins vs Runtime')

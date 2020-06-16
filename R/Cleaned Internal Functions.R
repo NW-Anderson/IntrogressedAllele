@@ -1,10 +1,10 @@
-#          1      2      3        4        5      6        7    8      9        10
-# par <- c(phi_A, phi_I, theta_I, theta_A, phi_N, theta_N, d_M, phi_B, theta_B, h)
-par <-   c(.95,   .1,    1,       20,      .1,    1,       .5,  .5,    12,      .05)
-pop = 1000 
-tol = 10^-3 
-num = 100
-n <- 1
+# #          1      2      3        4        5      6        7    8      9        10
+# # par <- c(phi_A, phi_I, theta_I, theta_A, phi_N, theta_N, d_M, phi_B, theta_B, h)
+# par <-   c(.95,   .1,    1,       20,      .1,    1,       .5,  .5,    12,      .05)
+# pop = 1000 
+# tol = 10^-3 
+# num = 100
+# n <- 1
 
 Psi <- function(s, n, pop, par){
   return(varPhi_I(s, n, par) * varPhi_N(s,n,par)^pop * psi_M(s, n, par))
