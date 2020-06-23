@@ -1,3 +1,4 @@
+##### Windows #####
 library(doSNOW)
 library(foreach)
 source('DoMatrix.R')
@@ -6,11 +7,21 @@ cl<-makeCluster(7, type="SOCK")
 on.exit(stopCluster(cl))
 opts <- list(preschedule = FALSE)
 registerDoSNOW(cl)
+##### Max/Unix #####
+library(doMC)
+library(foreach)
+source('DoMatrix.R')
+source('DoExact.R')
+#cl<-makeCluster(7, type="SOCK")
+#on.exit(stopCluster(cl))
+opts <- list(preschedule = FALSE)
+registerDoMC(7)
 
-ngen <- 40
+ngen <- 50
 
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
-par <-        c(1000,22.155,      .95,    1,      .1,     1,      .1,     12,     .5,    .05,.5)
+par <-        c(1500,6,      .69,    1,      .5,     1,      .5,     100,     0,    .05,.57)
+# par <-          c(1500,)
 aprx <- vector(length = ngen)
 pop <- vector(length = ngen)
 for(n in 1:ngen){
@@ -23,8 +34,8 @@ pp <- pop
 
 
 # par <- c(phi_A, phi_I, theta_I, theta_A, phi_N, theta_N, d_M, phi_B, theta_B, h)
-par <-   c(.95,   .1,    1,       22.155,   .1,    1,       .5,  .5,    12,    .05)
-pop = 1000 
+par <-   c(.69,   .5,    1,      6,       .5,     1,      .57,  0,    100,    .05)
+pop = 1500 
 tol = 10^-3 
 num = 100
 
@@ -50,7 +61,7 @@ exact <- results[,1]
 times <- results[,2]
 bins <- results[,3]
 
-plot(aprx, type = 'l',ylim = c(0,1), xlab = 'Generation', ylab = 'frequency', lwd = 2,
+plot(aprx, type = 'l', xlab = 'Generation', ylab = 'frequency', lwd = 2,
      main = 'Frequency Over Time')
 legend(x = 'topleft', lwd = 2, legend = c('Approx','Exact'), col = c('black','red'),
        bty = 'n')
