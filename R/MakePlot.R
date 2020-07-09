@@ -17,10 +17,10 @@ source('DoExact.R')
 opts <- list(preschedule = FALSE)
 registerDoMC(7)
 
-ngen <- 50
+ngen <- 40
 
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
-par <-        c(1500,6,      .69,    1,      .5,     1,      .5,     100,     0,    .05,.57)
+par <-        c(613,6,      .69,    1,      .5,     1,      .5,     100,     0,    .05,.57)
 # par <-          c(1500,)
 aprx <- vector(length = ngen)
 pop <- vector(length = ngen)
@@ -35,7 +35,7 @@ pp <- pop
 
 # par <- c(phi_A, phi_I, theta_I, theta_A, phi_N, theta_N, d_M, phi_B, theta_B, h)
 par <-   c(.69,   .5,    1,      6,       .5,     1,      .57,  0,    100,    .05)
-pop = 1500 
+pop = 613 
 tol = 10^-3 
 num = 100
 
