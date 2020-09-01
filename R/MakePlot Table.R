@@ -3,7 +3,7 @@ source('DoMatrix.R')
 source('ExactTableApproach.R')
 
 
-ngen <- 100
+ngen <- 40
 
 # names(par)<-c(pop, theta.a, phi.a, theta.i, phi.i, theta.n, phi.n, theta.b, phi.b, h, d.m)
 par <-        c(613,6,      .69,    1,      .5,     1,      .5,     100,     0,    .05,.57)
@@ -58,6 +58,7 @@ plot(aprx, type = 'l', xlab = 'Generation', ylab = 'frequency', lwd = 2,
 legend(x = 'topleft', lwd = 2, legend = c('Approx','Exact'), col = c('black','red'),
        bty = 'n')
 lines(results[,1], col = 'red', lwd = 2)
+
 
 
 plot(pp, type = 'l', xlab = 'Generation', ylab = 'Population Size', lwd = 2,

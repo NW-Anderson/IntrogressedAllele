@@ -225,6 +225,12 @@ dPsi <- function(s, n, pop, par, varPhi_I.array, varPhi_N.array, Psi_M.array, dv
 ################################
 #          Table Maker         #
 ################################
+SortTable <- function(tbl){
+  svals <- sort(as.numeric(substr(colnames(tbl),5,nchar(colnames(tbl)))))
+  new.tbl <- tbl[,paste('s =', svals)]
+  return(new.tbl)
+}
+
 MakeSeedTable <- function(ngen, par, pop){
   ##### Creating empty Tables #####
   varPhi_I.array <- array(dim = c(ngen, 5))
@@ -372,7 +378,19 @@ MakeNewcolumn <- function(ngen, par, pop, s, tables){
   }
   return(tables)
 }
-
+################################
+#    Derivative Calculator     #
+################################
+FindDerivs <- function(tbl){
+  secder <- array(dim = c(nrow(tbl),ncol(tbl)))
+  rownames(secder) <- rownames(tbl)
+  colnames(secder) <- colnames(tbl)
+  
+  tbl <- SortTable(tbl)
+  for(r in 1:nrow(tbl)){
+    secder[r,1] <-
+  }
+}
 # source('Cleaned Internal Functions.R')
 # check <- array(dim = c(ngen,3))
 # colnames(check) <- paste('s = ', c('0','0.5', '1'), sep = '')
