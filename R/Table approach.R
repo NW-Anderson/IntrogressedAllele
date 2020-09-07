@@ -228,7 +228,8 @@ dPsi <- function(s, n, pop, par, varPhi_I.array, varPhi_N.array, Psi_M.array, dv
 SortTable <- function(tbl){
   svals <- sort(as.numeric(substr(colnames(tbl),5,nchar(colnames(tbl)))))
   new.tbl <- tbl[,paste('s =', svals)]
-  return(new.tbl)
+  return(list('tbl' = new.tbl,
+              'svals' = svals))
 }
 
 MakeSeedTable <- function(ngen, par, pop){
@@ -386,22 +387,94 @@ FindDerivs <- function(tbl){
   rownames(secder) <- rownames(tbl)
   colnames(secder) <- colnames(tbl)
   
-  tbl <- SortTable(tbl)
+  temp <- SortTable(tbl)
+  tbl <- temp[[1]]
+  svals <- temp[[2]]
+  rm(temp)
   for(r in 1:nrow(tbl)){
-    secder[r,1] <-
+    for(c in 1:ncol(tbl)){
+      if(c == 1){
+        secder[r,c] <- threept(tbl[r,c],tbl[r,c+1], tbl[r,c+2],svals[c],svals[c+1],svals[c+2])
+      }else if(c == ncol(tbl)){
+        secder[r,c] <- threept(tbl[r,c],tbl[r,c-1], tbl[r,c-2],svals[c],svals[c-1],svals[c-2])
+      }else{
+        secder[r,c] <- threept(tbl[r,c],tbl[r,c-1], tbl[r,c+1],svals[c],svals[c-1],svals[c+1])
+      }
+    }
   }
+  return(secder)
 }
-# source('Cleaned Internal Functions.R')
-# check <- array(dim = c(ngen,3))
-# colnames(check) <- paste('s = ', c('0','0.5', '1'), sep = '')
-# rownames(check) <- paste('gen = ', 1:ngen, sep = '')
-# for (n in 1:ngen) {
-#   check[n,1] <- dPsi(0,n,pop,par)
-#   check[n,2] <- dPsi(0.5,n,pop,par)
-#   check[n,3] <- dPsi(1,n,pop,par)
-# }
-# end <- Sys.time()
-# old <- end - start
-# old 
-# new
-# (new - old) 
+
+threept <- function(fx0,fx1,fx2,x0,x1,x2){
+  return(fx0 * ((2*x0 -x1 - x2)/((x0-x1)*(x0-x2))) + 
+    fx1 * ((2*x0 -x0 - x2)/((x1-x0)*(x1-x2))) +
+    fx2 * ((2*x0 -x0 - x1)/((x2-x0)*(x2-x1))))
+}
+
+################################
+#      Composite Simpsons      #
+################################
+CompositeSimpsonsWrapper <- function(Psi.array, deriv.array, secderiv.array, svals){
+  difs <- svals[2:length(svals)] - svals[1:(length(svals)-1)]
+  difs.index <-array(F,dim = c(length(svals), length(names(table(difs)))))
+  rownames(difs.index) <- paste('s =', svals)
+  colnames(difs.index) <- names(table(difs))
+  for(i in 1:length(difs)){
+    difs.index[i,which(as.character(difs[i]) == colnames(difs.index))] <- T
+    difs.index[i + 1,which(as.character(difs[i]) == colnames(difs.index))] <- T
+  }
+  vars <- vector(length = nrow(deriv.array))
+  for (n in 1:length(vars)) {
+    total <- 0
+    for (c in 1:ncol(difs.index)) {
+      ssubset <- svals[difs.index[,c]]
+      total <- total + CompositeSimpsons(svals = ssubset, 
+                                         derivvals = deriv.array[n,], 
+                                         secderivvals = secderiv.array[n,])
+    }
+    vars[n] <- 1/(1-Psi.array[n,1])* total
+  }
+  return(vars)
+}
+
+CompositeSimpsons <- function(svals, 
+                  derivvals, 
+                  secderivvals){
+  a <- min(svals)
+  b <- max(svals)
+  n <- length(svals) - 1
+  h <- (b-a)/n
+  xi0 <- InsideIntegral(s = a,
+                        der = derivvals[which(paste('s =', a) == names(derivvals))],
+                        secder = secderivvals[which(paste('s =', a) == names(secderivvals))])+
+    InsideIntegral(s = b,
+                   der = derivvals[which(paste('s =', b) == names(derivvals))],
+                   secder = secderivvals[which(paste('s =', b) == names(secderivvals))])
+  xi1 <- 0
+  xi2 <- 0
+  for(i in 2:n){
+    if(i %% 2 == 0) xi2 <- xi2 + InsideIntegral(s = svals[i],
+                                                der = derivvals[which(paste('s =', svals[i]) == names(derivvals))],
+                                                secder = secderivvals[which(paste('s =', svals[i]) == names(secderivvals))])
+    if(i %% 2 == 1) xi1 <- xi1 + InsideIntegral(s = svals[i],
+                                                der = derivvals[which(paste('s =', svals[i]) == names(derivvals))],
+                                                secder = secderivvals[which(paste('s =', svals[i]) == names(secderivvals))])
+  }
+  return(h * (xi0 + 2*xi2 + 4* xi1)/3)
+}
+
+InsideIntegral <-  function(s,der,secder){
+  if(s == 0) s <- 10^(-25)
+  return(-log(s) * (s * secder + der))
+}
+
+
+
+
+
+
+
+
+
+
+
